@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "stonks"
+version = "0.1.0"
+description = "Discord crypto price & chart bot"
+authors = ["Christian Pérez Villanueva <perez.villanueva.christian34@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+python-dotenv = "^0.19.2"
+py-cord = {git = "https://github.com/Pycord-Development/pycord.git"}
+
+[tool.poetry.dev-dependencies]
+black = "^21.12b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
