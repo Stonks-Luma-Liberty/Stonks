@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+
+  stonks_bot:
+    build: .
+    command: bash -c "python main.py"
+    volumes:
+      - .:/stonks_bot
+    ports:
+      - 8000:8000
