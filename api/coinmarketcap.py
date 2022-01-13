@@ -59,7 +59,7 @@ class CoinMarketCap:
         logger.info("Retrieving trending coins from CoinMarketCap")
         coins = []
         async with aiohttp.ClientSession() as session, session.get(
-                "https://coinmarketcap.com/trending-cryptocurrencies/", headers=HEADERS
+            "https://coinmarketcap.com/trending-cryptocurrencies/", headers=HEADERS
         ) as response:
             df = pd.read_html(await response.text(), flavor="bs4")[0]
 
