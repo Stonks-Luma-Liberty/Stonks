@@ -53,10 +53,13 @@ class CoinGecko:
 
         async with self.cg as cg:
             trending_coins = await cg.get_search_trending()
-        return trending_coins["coins"]
+        return [
+            f"{coin['item']['name']} ({coin['item']['symbol']})"
+            for coin in trending_coins["coins"]
+        ]
 
     async def coin_market_lookup(
-            self, ids: str, time_frame: int, base_coin: str
+        self, ids: str, time_frame: int, base_coin: str
     ) -> dict:
         """Coin lookup in CoinGecko API for Market Chart
 

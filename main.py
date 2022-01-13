@@ -4,6 +4,8 @@ from discord import ApplicationContext
 from discord import Bot, Embed, ButtonStyle
 from discord.ext.pages import Paginator, PaginatorButton
 
+from api.coingecko import CoinGecko
+from api.coinmarketcap import CoinMarketCap
 from config import DISCORD_BOT_TOKEN, logger
 from utils import get_coin_ids, get_coin_stats
 
@@ -16,7 +18,12 @@ async def on_ready():
 
 
 @bot.slash_command()
-async def price(ctx: ApplicationContext, symbol: str):
+async def price(ctx: ApplicationContext, symbol: str) -> None:
+    """
+    Displays token price data from CoinGecko/CoinMarketCap
+    :param ctx: Discord Bot Application Context
+    :param symbol: Cryptocurrency token symbol
+    """
     logger.info("Price command executed")
     pages = []
     coin_ids = await get_coin_ids(symbol=symbol.upper())
@@ -84,6 +91,31 @@ async def price(ctx: ApplicationContext, symbol: str):
         PaginatorButton(button_type="next", style=ButtonStyle.green, emoji="➡")
     )
     await paginator.respond(ctx.interaction)
+
+
+@bot.slash_command()
+async def trending(ctx: ApplicationContext) -> None:
+    """
+    Displays trending tokens on CoinGecko & CoinMarketCap
+    :param ctx: Discord Bot Application Context
+    """
+    logger.info("Retrieving trending addresses from CoinGecko")
+    coin_gecko = CoinGecko()
+    coin_market_cap = CoinMarketCap()
+
+    coin_gecko_trending_coins = "\n> ".join(await coin_gecko.get_trending_coins())
+    coin_market_cap_trending_coins = "\n> ".join(
+        await coin_market_cap.get_trending_coins()
+    )
+
+    embed_message = Embed(title="Trending tokens 🔥", colour=0x43CA7E)
+    embed_message.add_field(
+        name="CoinGecko", value=f"> {coin_gecko_trending_coins}", inline=False
+    )
+    embed_message.add_field(
+        name="CoinMarketCap", value=f"> {coin_market_cap_trending_coins}", inline=False
+    )
+    await ctx.respond(embed=embed_message)
 
 
 bot.run(DISCORD_BOT_TOKEN)
