@@ -1,4 +1,5 @@
 from aiocoingecko import AsyncCoinGeckoAPISession
+from pandas import DataFrame, to_datetime
 from requests.exceptions import RequestException
 
 from api import coingecko_coin_lookup_cache
@@ -60,7 +61,7 @@ class CoinGecko:
 
     async def coin_market_lookup(
         self, ids: str, time_frame: int, base_coin: str
-    ) -> dict:
+    ) -> DataFrame:
         """Coin lookup in CoinGecko API for Market Chart
 
         Args:
@@ -74,7 +75,13 @@ class CoinGecko:
         logger.info("Looking up chart data for %s in CoinGecko API", ids)
 
         async with self.cg as cg:
-            return await cg.get_coin_market_chart_by_id(ids, base_coin, time_frame)
+            data = await cg.get_coin_ohlc_by_id(
+                coin_id=ids, vs_currency=base_coin, days=time_frame
+            )
+            dataframe = DataFrame(data, columns=["Date", "Open", "High", "Low", "Close"])
+            dataframe.Date = to_datetime(dataframe.Date, unit="ms")
+            return dataframe
+            # return await cg.get_coin_market_chart_by_id(ids, base_coin, time_frame)
 
     async def get_coin_ids(self, symbol: str) -> list:
         """Retrieves coin stats from connected services crypto services

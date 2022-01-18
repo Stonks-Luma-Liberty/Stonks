@@ -1,8 +1,15 @@
 import logging
+import tempfile
+from io import BufferedReader, BytesIO
 
+import discord
+import plotly.graph_objects as go
+import plotly.io as pio
 from discord import ApplicationContext
 from discord import Bot, Embed, ButtonStyle
+from discord.commands import Option
 from discord.ext.pages import Paginator, PaginatorButton
+from inflection import humanize
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -18,7 +25,9 @@ async def on_ready():
 
 
 @bot.slash_command()
-async def price(ctx: ApplicationContext, symbol: str) -> None:
+async def price(
+    ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
+) -> None:
     """
     Displays token price data from CoinGecko/CoinMarketCap
     :param ctx: Discord Bot Application Context
@@ -75,7 +84,7 @@ async def price(ctx: ApplicationContext, symbol: str) -> None:
         if "percent_change_ath" in coin_stats:
             percent_change_ath = coin_stats["percent_change_ath"]
             embed_message.add_field(
-                name="ATH Change 📈" if percent_change_ath else "ATH Change 📉",
+                name="ATH Change 📈" if percent_change_ath > 0 else "ATH Change 📉",
                 value=f"{percent_change_ath}%",
                 inline=True,
             )
@@ -116,6 +125,52 @@ async def trending(ctx: ApplicationContext) -> None:
         name="CoinMarketCap", value=f"> {coin_market_cap_trending_coins}", inline=False
     )
     await ctx.respond(embed=embed_message)
+
+
+@bot.slash_command()
+async def chart(
+    ctx: ApplicationContext,
+    symbol: Option(str, "Symbol of token to chart"),
+    days: Option(str, "Number of days", choices=["1", "7", "14", "30", "90", "180", "365", "max"], required=True),
+):
+    logger.info("Price command executed")
+    coin_gecko = CoinGecko()
+    symbol = symbol.upper()
+
+    coin_ids = await get_coin_ids(symbol=symbol)
+
+    for ids in coin_ids:
+        market = await coin_gecko.coin_market_lookup(
+            ids=ids, time_frame=days, base_coin="usd"
+        )
+        fig = go.Figure(
+            data=[
+                go.Candlestick(
+                    x=market.Date,
+                    open=market.Open,
+                    high=market.High,
+                    low=market.Low,
+                    close=market.Close,
+                ),
+            ]
+        )
+        fig.update_layout(
+            title=f"Candlestick graph for {humanize(ids)} ({symbol})",
+            xaxis_title="Date",
+            yaxis_title="Price (USD)",
+            xaxis_rangeslider_visible=False,
+        )
+
+        fig.update_yaxes(tickprefix="$")
+
+        await ctx.respond(
+            file=discord.File(
+                BufferedReader(
+                    BytesIO(pio.to_image(fig, format="png", engine="kaleido"))  # type: ignore
+                ),
+                filename=f"{tempfile.NamedTemporaryFile()}.png",
+            )
+        )
 
 
 bot.run(DISCORD_BOT_TOKEN)
