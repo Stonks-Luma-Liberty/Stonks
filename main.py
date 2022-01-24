@@ -26,7 +26,7 @@ async def on_ready():
 
 @bot.slash_command()
 async def price(
-    ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
+        ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
 ) -> None:
     """
     Displays token price data from CoinGecko/CoinMarketCap
@@ -129,10 +129,16 @@ async def trending(ctx: ApplicationContext) -> None:
 
 @bot.slash_command()
 async def chart(
-    ctx: ApplicationContext,
-    symbol: Option(str, "Symbol of token to chart"),
-    days: Option(str, "Number of days", choices=["1", "7", "14", "30", "90", "180", "365", "max"], required=True),
-):
+        ctx: ApplicationContext,
+        symbol: Option(str, "Symbol of token to chart"),
+        days: Option(str, "Number of days", choices=["1", "7", "14", "30", "90", "180", "365", "max"], required=True),
+) -> None:
+    """
+    Displays token charting data
+    :param ctx: Discord Bot Application Context
+    :param symbol: Token Symbol
+    :param days: Number of days to chart
+    """
     logger.info("Price command executed")
     coin_gecko = CoinGecko()
     symbol = symbol.upper()
