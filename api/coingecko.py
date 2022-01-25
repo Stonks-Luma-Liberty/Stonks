@@ -78,7 +78,9 @@ class CoinGecko:
             data = await cg.get_coin_ohlc_by_id(
                 coin_id=ids, vs_currency=base_coin, days=time_frame
             )
-            dataframe = DataFrame(data, columns=["Date", "Open", "High", "Low", "Close"])
+            dataframe = DataFrame(
+                data, columns=["Date", "Open", "High", "Low", "Close"]
+            )
             dataframe.Date = to_datetime(dataframe.Date, unit="ms")
             return dataframe
             # return await cg.get_coin_market_chart_by_id(ids, base_coin, time_frame)
