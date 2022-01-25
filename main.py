@@ -1,3 +1,4 @@
+import datetime
 import logging
 import tempfile
 from io import BufferedReader, BytesIO
@@ -10,10 +11,12 @@ from discord import Bot, Embed, ButtonStyle
 from discord.commands import Option
 from discord.ext.pages import Paginator, PaginatorButton
 from inflection import humanize
+from tortoise import Tortoise
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
-from config import DISCORD_BOT_TOKEN, logger
+from config import DISCORD_BOT_TOKEN, logger, DB_URL
+from models import MonthlySubmission
 from utils import get_coin_ids, get_coin_stats
 
 bot = Bot()
@@ -23,10 +26,13 @@ bot = Bot()
 async def on_ready():
     logging.info(f"{bot.user} successfully logged in!")
 
+    await Tortoise.init(db_url=DB_URL, modules={"models": ["models"]})
+    await Tortoise.generate_schemas()
+
 
 @bot.slash_command()
 async def price(
-        ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
+    ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
 ) -> None:
     """
     Displays token price data from CoinGecko/CoinMarketCap
@@ -129,9 +135,14 @@ async def trending(ctx: ApplicationContext) -> None:
 
 @bot.slash_command()
 async def chart(
-        ctx: ApplicationContext,
-        symbol: Option(str, "Symbol of token to chart"),
-        days: Option(str, "Number of days", choices=["1", "7", "14", "30", "90", "180", "365", "max"], required=True),
+    ctx: ApplicationContext,
+    symbol: Option(str, "Symbol of token to chart"),
+    days: Option(
+        str,
+        "Number of days",
+        choices=["1", "7", "14", "30", "90", "180", "365", "max"],
+        required=True,
+    ),
 ) -> None:
     """
     Displays token charting data
@@ -177,6 +188,28 @@ async def chart(
                 filename=f"{tempfile.NamedTemporaryFile()}.png",
             )
         )
+
+
+@bot.slash_command()
+async def submit_token(
+    ctx: ApplicationContext,
+    token_name: Option(str, "Name of token"),
+    symbol: Option(str, "Symbol of token"),
+) -> None:
+    """
+    Submits token to monthly poll to vote for token of the month
+    :param ctx: Discord Bot Application Context
+    :param token_name: Name of token
+    :param symbol: Symbol of token
+    """
+    today = datetime.date.today()
+    logger.info(f"{ctx.user} executed [submit_token] command")
+    await MonthlySubmission.create(token_name=token_name, symbol=symbol)
+
+    logger.info("Token submission success")
+    await ctx.respond(
+        content=f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing"
+    )
 
 
 bot.run(DISCORD_BOT_TOKEN)
