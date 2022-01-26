@@ -1,14 +1,15 @@
 import datetime
 import logging
+import random
 import tempfile
 from io import BufferedReader, BytesIO
 
 import discord
 import plotly.graph_objects as go
 import plotly.io as pio
-from discord import ApplicationContext
-from discord import Bot, Embed, ButtonStyle
-from discord.commands import Option
+from discord import ApplicationContext, Interaction
+from discord import Bot, Embed, ButtonStyle, AllowedMentions
+from discord.commands import Option, permissions
 from discord.ext.pages import Paginator, PaginatorButton
 from inflection import humanize
 from tortoise import Tortoise
@@ -16,10 +17,11 @@ from tortoise import Tortoise
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
 from config import DISCORD_BOT_TOKEN, logger, DB_URL
+from constants import KEYCAP_DIGITS
 from models import MonthlySubmission
 from utils import get_coin_ids, get_coin_stats
 
-bot = Bot()
+bot = Bot(allowed_mentions=AllowedMentions(everyone=True))
 
 
 @bot.event
@@ -210,6 +212,42 @@ async def submit_token(
     await ctx.respond(
         content=f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing"
     )
+
+
+@bot.slash_command(default_permission=False)
+@permissions.has_role("Admin")
+async def monthly_draw(ctx: ApplicationContext) -> None:
+    """
+    Creates poll so that users may vote for the token of the month
+    :param ctx: Discord Bot Application Context
+    """
+    logger.info(f"{ctx.user} executed [submit_token] command")
+    today = datetime.date.today()
+    beginning_of_month = today.replace(day=1)
+
+    logger.info("Gathering poll submissions")
+    submissions = await MonthlySubmission.filter(
+        date_submitted__range=[str(beginning_of_month), str(today)]
+    )
+    random.shuffle(submissions)
+    submissions = submissions[:10]
+    submissions_len = len(submissions)
+
+    embed_message = Embed(colour=0x0F3FE5)
+    tokens = "".join(
+        f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
+        for index in range(submissions_len)
+    )
+    embed_message.add_field(
+        name="Vote for the token of the month! 🗳️", value=tokens, inline=True
+    )
+
+    logger.info("Replied with poll")
+    interaction: Interaction = await ctx.respond(content="@everyone", embed=embed_message)
+
+    logger.info("Adding reactions")
+    for index in range(submissions_len):
+        await interaction.channel.last_message.add_reaction(KEYCAP_DIGITS[index])
 
 
 bot.run(DISCORD_BOT_TOKEN)
