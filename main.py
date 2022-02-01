@@ -1,21 +1,17 @@
 import datetime
 import logging
 import random
-import tempfile
-from io import BufferedReader, BytesIO
 
-import discord
-import plotly.graph_objects as go
-import plotly.io as pio
 from discord import ApplicationContext, Interaction
 from discord import Bot, Embed, ButtonStyle, AllowedMentions
 from discord.commands import Option, permissions
 from discord.ext.pages import Paginator, PaginatorButton
-from inflection import humanize
+from discord.ui import View
 from tortoise import Tortoise
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
+from button import ChartButton
 from config import DISCORD_BOT_TOKEN, logger, DB_URL
 from constants import KEYCAP_DIGITS
 from models import MonthlySubmission
@@ -153,43 +149,16 @@ async def chart(
     :param days: Number of days to chart
     """
     logger.info("Price command executed")
-    coin_gecko = CoinGecko()
     symbol = symbol.upper()
+    embed_message = Embed(title="Choose chart to generate", colour=0x338E86)
+    view = View(timeout=30)
 
     coin_ids = await get_coin_ids(symbol=symbol)
 
     for ids in coin_ids:
-        market = await coin_gecko.coin_market_lookup(
-            ids=ids, time_frame=days, base_coin="usd"
-        )
-        fig = go.Figure(
-            data=[
-                go.Candlestick(
-                    x=market.Date,
-                    open=market.Open,
-                    high=market.High,
-                    low=market.Low,
-                    close=market.Close,
-                ),
-            ]
-        )
-        fig.update_layout(
-            title=f"Candlestick graph for {humanize(ids)} ({symbol})",
-            xaxis_title="Date",
-            yaxis_title="Price (USD)",
-            xaxis_rangeslider_visible=False,
-        )
+        view.add_item(item=ChartButton(label=ids, days=days, symbol=symbol))
 
-        fig.update_yaxes(tickprefix="$")
-
-        await ctx.respond(
-            file=discord.File(
-                BufferedReader(
-                    BytesIO(pio.to_image(fig, format="png", engine="kaleido"))  # type: ignore
-                ),
-                filename=f"{tempfile.NamedTemporaryFile()}.png",
-            )
-        )
+    await ctx.respond(embed=embed_message, view=view)
 
 
 @bot.slash_command()
@@ -243,7 +212,9 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     )
 
     logger.info("Replied with poll")
-    interaction: Interaction = await ctx.respond(content="@everyone", embed=embed_message)
+    interaction: Interaction = await ctx.respond(
+        content="@everyone", embed=embed_message
+    )
 
     logger.info("Adding reactions")
     for index in range(submissions_len):

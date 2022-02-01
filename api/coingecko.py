@@ -60,13 +60,13 @@ class CoinGecko:
         ]
 
     async def coin_market_lookup(
-        self, ids: str, time_frame: int, base_coin: str
+        self, ids: str, time_frame: str, base_coin: str
     ) -> DataFrame:
         """Coin lookup in CoinGecko API for Market Chart
 
         Args:
             ids (str): id of coin to lookup
-            time_frame (int): Indicates number of days for data span
+            time_frame (str): Indicates number of days for data span
             base_coin (str): Indicates base coin
 
         Returns:
@@ -83,7 +83,6 @@ class CoinGecko:
             )
             dataframe.Date = to_datetime(dataframe.Date, unit="ms")
             return dataframe
-            # return await cg.get_coin_market_chart_by_id(ids, base_coin, time_frame)
 
     async def get_coin_ids(self, symbol: str) -> list:
         """Retrieves coin stats from connected services crypto services
