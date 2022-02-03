@@ -74,6 +74,7 @@ async def get_coin_stats(coin_id: str) -> dict:
     coin_gecko = CoinGecko()
     coin_market_cap = CoinMarketCap()
     coin_stats = {}
+    price, all_time_high, market_cap, volume = 0, 0, 0, 0
     try:
         data = await coin_gecko.coin_lookup(ids=coin_id)
 
@@ -82,10 +83,12 @@ async def get_coin_stats(coin_id: str) -> dict:
         platforms = data["platforms"]
 
         explorers = get_coin_explorers(platforms=platforms, links=links)
-        price = "${:,}".format(float(market_data["current_price"]["usd"]))
-        all_time_high = "${:,}".format(float(market_data["ath"]["usd"]))
-        market_cap = "${:,}".format(float(market_data["market_cap"]["usd"]))
-        volume = "${:,}".format(float(market_data["total_volume"]["usd"]))
+
+        if "usd" in market_data["current_price"]:
+            price = "${:,}".format(float(market_data["current_price"]["usd"]))
+            all_time_high = "${:,}".format(float(market_data["ath"]["usd"]))
+            market_cap = "${:,}".format(float(market_data["market_cap"]["usd"]))
+            volume = "${:,}".format(float(market_data["total_volume"]["usd"]))
 
         percent_change_24h = market_data["price_change_percentage_24h"]
         percent_change_7d = market_data["price_change_percentage_7d"]
@@ -104,12 +107,13 @@ async def get_coin_stats(coin_id: str) -> dict:
                 "market_cap_rank": market_cap_rank,
                 "market_cap": market_cap,
                 "volume": volume,
-                "percent_change_24h": percent_change_24h,
-                "percent_change_7d": percent_change_7d,
-                "percent_change_30d": percent_change_30d,
-                "percent_change_ath": percent_change_ath,
+                "percent_change_24h": percent_change_24h or 0,
+                "percent_change_7d": percent_change_7d or 0,
+                "percent_change_30d": percent_change_30d or 0,
+                "percent_change_ath": percent_change_ath or 0,
             }
         )
+
     except (IndexError, HTTPError, HTTPException):
         logger.info(
             f"{coin_id} not found in CoinGecko. Initiated lookup on CoinMarketCap."
