@@ -190,6 +190,8 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     :param ctx: Discord Bot Application Context
     """
     logger.info(f"{ctx.user} executed [submit_token] command")
+    reactions = []
+    tokens = ""
     today = datetime.date.today()
     beginning_of_month = today.replace(day=1)
     embed_message = Embed(colour=0x0F3FE5)
@@ -199,10 +201,10 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     )
     submissions_len = len(submissions)
 
-    tokens = "".join(
-        f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
-        for index in range(submissions_len)
-    )
+    for index in range(submissions_len):
+        tokens += f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
+        reactions.append(KEYCAP_DIGITS[index])
+
     embed_message.add_field(
         name="Vote for the token of the month! 🗳️", value=tokens, inline=True
     )
@@ -211,8 +213,8 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
         content="@everyone", embed=embed_message
     )
 
-    for index in range(submissions_len):
-        await interaction.channel.last_message.add_reaction(KEYCAP_DIGITS[index])
+    for reaction in reactions:
+        await interaction.channel.last_message.add_reaction(reaction)
 
 
 bot.run(DISCORD_BOT_TOKEN)
