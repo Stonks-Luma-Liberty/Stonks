@@ -5,6 +5,8 @@ from typing import List
 from tortoise import fields
 from tortoise.models import Model
 
+from config import logger
+
 
 class MonthlySubmission(Model):
     id = fields.IntField(pk=True)
@@ -13,9 +15,8 @@ class MonthlySubmission(Model):
     date_submitted = fields.DateField(default=datetime.date.today())
 
     async def get_randomized_submissions(self, date_range: List[str]) -> List[Model]:
-        submissions = await self.filter(
-            date_submitted__range=date_range
-        )
+        logger.info("Gathering poll submissions")
+        submissions = await self.filter(date_submitted__range=date_range)
         shuffle(submissions)
         return submissions[:10]
 

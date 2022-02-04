@@ -194,8 +194,9 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     beginning_of_month = today.replace(day=1)
     embed_message = Embed(colour=0x0F3FE5)
 
-    logger.info("Gathering poll submissions")
-    submissions = await MonthlySubmission().get_randomized_submissions(date_range=[str(beginning_of_month), str(today)])
+    submissions = await MonthlySubmission().get_randomized_submissions(
+        date_range=[str(beginning_of_month), str(today)]
+    )
     submissions_len = len(submissions)
 
     tokens = "".join(
@@ -206,12 +207,10 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
         name="Vote for the token of the month! 🗳️", value=tokens, inline=True
     )
 
-    logger.info("Replied with poll")
     interaction: Interaction = await ctx.respond(
         content="@everyone", embed=embed_message
     )
 
-    logger.info("Adding reactions")
     for index in range(submissions_len):
         await interaction.channel.last_message.add_reaction(KEYCAP_DIGITS[index])
 
