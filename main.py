@@ -1,6 +1,5 @@
 import datetime
 import logging
-import random
 
 from discord import ApplicationContext, Interaction
 from discord import Bot, Embed, ButtonStyle, AllowedMentions
@@ -193,16 +192,12 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     logger.info(f"{ctx.user} executed [submit_token] command")
     today = datetime.date.today()
     beginning_of_month = today.replace(day=1)
+    embed_message = Embed(colour=0x0F3FE5)
 
     logger.info("Gathering poll submissions")
-    submissions = await MonthlySubmission.filter(
-        date_submitted__range=[str(beginning_of_month), str(today)]
-    )
-    random.shuffle(submissions)
-    submissions = submissions[:10]
+    submissions = await MonthlySubmission().get_randomized_submissions(date_range=[str(beginning_of_month), str(today)])
     submissions_len = len(submissions)
 
-    embed_message = Embed(colour=0x0F3FE5)
     tokens = "".join(
         f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
         for index in range(submissions_len)
