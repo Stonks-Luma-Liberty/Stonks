@@ -193,15 +193,13 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     reactions = []
     tokens = ""
     today = datetime.date.today()
-    beginning_of_month = today.replace(day=1)
     embed_message = Embed(colour=0x0F3FE5)
 
     submissions = await MonthlySubmission().get_randomized_submissions(
-        date_range=[str(beginning_of_month), str(today)]
+        date_range=[str(today.replace(day=1)), str(today)]
     )
-    submissions_len = len(submissions)
 
-    for index in range(submissions_len):
+    for index in range(len(submissions)):
         tokens += f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
         reactions.append(KEYCAP_DIGITS[index])
 
