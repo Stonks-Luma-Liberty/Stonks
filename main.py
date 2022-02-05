@@ -1,6 +1,5 @@
 import datetime
 import logging
-import random
 
 from discord import ApplicationContext, Interaction
 from discord import Bot, Embed, ButtonStyle, AllowedMentions
@@ -15,7 +14,7 @@ from button import ChartButton
 from config import DISCORD_BOT_TOKEN, logger, DB_URL
 from constants import KEYCAP_DIGITS
 from models import MonthlySubmission
-from utils import get_coin_ids, get_coin_stats
+from utils import get_coin_ids, get_coin_stats, add_reactions
 
 bot = Bot(allowed_mentions=AllowedMentions(everyone=True))
 
@@ -191,34 +190,28 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     :param ctx: Discord Bot Application Context
     """
     logger.info(f"{ctx.user} executed [submit_token] command")
+    reactions = []
+    tokens = ""
     today = datetime.date.today()
-    beginning_of_month = today.replace(day=1)
-
-    logger.info("Gathering poll submissions")
-    submissions = await MonthlySubmission.filter(
-        date_submitted__range=[str(beginning_of_month), str(today)]
-    )
-    random.shuffle(submissions)
-    submissions = submissions[:10]
-    submissions_len = len(submissions)
-
     embed_message = Embed(colour=0x0F3FE5)
-    tokens = "".join(
-        f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
-        for index in range(submissions_len)
+
+    submissions = await MonthlySubmission().get_randomized_submissions(
+        date_range=[str(today.replace(day=1)), str(today)]
     )
+
+    for index in range(len(submissions)):
+        tokens += f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
+        reactions.append(KEYCAP_DIGITS[index])
+
     embed_message.add_field(
         name="Vote for the token of the month! 🗳️", value=tokens, inline=True
     )
 
-    logger.info("Replied with poll")
     interaction: Interaction = await ctx.respond(
         content="@everyone", embed=embed_message
     )
 
-    logger.info("Adding reactions")
-    for index in range(submissions_len):
-        await interaction.channel.last_message.add_reaction(KEYCAP_DIGITS[index])
+    await add_reactions(interaction.channel.last_message, reactions)
 
 
 bot.run(DISCORD_BOT_TOKEN)
