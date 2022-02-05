@@ -1,6 +1,9 @@
 from http.client import HTTPException
+from typing import List
 from urllib.error import HTTPError
 from urllib.parse import urlparse
+
+from discord import Message
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -156,3 +159,13 @@ async def get_coin_stats(coin_id: str) -> dict:
             }
         )
     return coin_stats
+
+
+async def add_reactions(message: Message, reactions: List[str]) -> None:
+    """
+    Adds reactions to message
+    :param message: Discord Message
+    :param reactions: List of reactions to add to message
+    """
+    for reaction in reactions:
+        await message.add_reaction(reaction)

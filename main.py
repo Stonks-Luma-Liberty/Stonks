@@ -14,7 +14,7 @@ from button import ChartButton
 from config import DISCORD_BOT_TOKEN, logger, DB_URL
 from constants import KEYCAP_DIGITS
 from models import MonthlySubmission
-from utils import get_coin_ids, get_coin_stats
+from utils import get_coin_ids, get_coin_stats, add_reactions
 
 bot = Bot(allowed_mentions=AllowedMentions(everyone=True))
 
@@ -213,8 +213,7 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
         content="@everyone", embed=embed_message
     )
 
-    for reaction in reactions:
-        await interaction.channel.last_message.add_reaction(reaction)
+    await add_reactions(interaction.channel.last_message, reactions)
 
 
 bot.run(DISCORD_BOT_TOKEN)
