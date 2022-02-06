@@ -174,11 +174,17 @@ async def submit_token(
     """
     today = datetime.date.today()
     logger.info(f"{ctx.user} executed [submit_token] command")
+
     await MonthlySubmission.create(token_name=token_name, symbol=symbol)
 
     logger.info("Token submission success")
+    embed_message = Embed(
+        title=f"Submitted **{token_name} ({symbol})** to {today.strftime('%B %Y')} drawing",
+        colour=0xbad330,
+    )
+
     await ctx.respond(
-        content=f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing"
+        embed=embed_message
     )
 
 
