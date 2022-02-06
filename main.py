@@ -180,12 +180,10 @@ async def submit_token(
     logger.info("Token submission success")
     embed_message = Embed(
         title=f"Submitted **{token_name} ({symbol})** to {today.strftime('%B %Y')} drawing",
-        colour=0xbad330,
+        colour=0xBAD330,
     )
 
-    await ctx.respond(
-        embed=embed_message
-    )
+    await ctx.respond(embed=embed_message)
 
 
 @bot.slash_command(default_permission=False)
