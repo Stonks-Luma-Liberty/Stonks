@@ -1,5 +1,6 @@
 import datetime
 import logging
+from operator import itemgetter
 
 from discord import ApplicationContext, Interaction
 from discord import Bot, Embed, ButtonStyle, AllowedMentions
@@ -41,13 +42,11 @@ async def price(
     pages = []
 
     try:
-        coin_ids = await get_coin_ids(symbol=symbol.upper())
-
-        for ids in coin_ids:
+        for ids in await get_coin_ids(symbol=symbol.upper()):
             coin_stats = await get_coin_stats(coin_id=ids)
-            percent_change_24h = coin_stats["percent_change_24h"]
-            percent_change_7d = coin_stats["percent_change_7d"]
-            percent_change_30d = coin_stats["percent_change_30d"]
+            percent_change_24h, percent_change_7d, percent_change_30d = itemgetter(
+                "percent_change_24h", "percent_change_7d", "percent_change_30d"
+            )(coin_stats)
 
             embed_message = Embed(
                 title=f"{coin_stats['name']} ({coin_stats['symbol']})",
@@ -59,7 +58,9 @@ async def price(
                 value=", ".join(coin_stats["explorers"]),
                 inline=False,
             )
-            embed_message.add_field(name="Price 💸", value=coin_stats["price"], inline=False)
+            embed_message.add_field(
+                name="Price 💸", value=coin_stats["price"], inline=False
+            )
             embed_message.add_field(
                 name="Market Cap Rank 🥇",
                 value=coin_stats["market_cap_rank"],
@@ -97,7 +98,9 @@ async def price(
             pages.append(embed_message)
         paginator = Paginator(pages=pages, use_default_buttons=False)
         paginator.add_button(
-            PaginatorButton(button_type="prev", label="", style=ButtonStyle.red, emoji="⬅")
+            PaginatorButton(
+                button_type="prev", label="", style=ButtonStyle.red, emoji="⬅"
+            )
         )
         paginator.add_button(
             PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True)
@@ -120,7 +123,6 @@ async def price(
             colour=0xC5E519,
         )
         await ctx.respond(embed=embed_message)
-
 
 
 @bot.slash_command()
