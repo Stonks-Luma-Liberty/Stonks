@@ -73,19 +73,31 @@ async def get_coin_stats(coin_id: str) -> dict:
     Returns:
         dict: Cryptocurrency coin statistics
     """
+    # Search with CoinGecko API
     logger.info(f"Getting coin stats for {coin_id}")
-    # Search CoinGecko API first
     coin_gecko = CoinGecko()
-    coin_market_cap = CoinMarketCap()
     coin_stats = {}
     price, all_time_high, market_cap, volume = 0, 0, 0, 0
     try:
         data = await coin_gecko.coin_lookup(ids=coin_id)
 
-        market_data = data["market_data"]
-        links = data["links"]
-        platforms = data["platforms"]
-
+        market_data, links, platforms = itemgetter("market_data", "links", "platforms")(
+            data
+        )
+        (
+            percent_change_24h,
+            percent_change_7d,
+            percent_change_30d,
+            market_cap_rank,
+        ) = itemgetter(
+            "price_change_percentage_24h",
+            "price_change_percentage_7d",
+            "price_change_percentage_30d",
+            "market_cap_rank",
+        )(
+            market_data
+        )
+        percent_change_ath = market_data["ath_change_percentage"]["usd"]
         explorers = get_coin_explorers(platforms=platforms, links=links)
 
         if "usd" in market_data["current_price"]:
@@ -93,12 +105,6 @@ async def get_coin_stats(coin_id: str) -> dict:
             all_time_high = "${:,}".format(float(market_data["ath"]["usd"]))
             market_cap = "${:,}".format(float(market_data["market_cap"]["usd"]))
             volume = "${:,}".format(float(market_data["total_volume"]["usd"]))
-
-        percent_change_24h = market_data["price_change_percentage_24h"]
-        percent_change_7d = market_data["price_change_percentage_7d"]
-        percent_change_30d = market_data["price_change_percentage_30d"]
-        percent_change_ath = market_data["ath_change_percentage"]["usd"]
-        market_cap_rank = market_data["market_cap_rank"]
 
         coin_stats.update(
             {
@@ -119,9 +125,11 @@ async def get_coin_stats(coin_id: str) -> dict:
         )
 
     except (IndexError, HTTPError, HTTPException):
+        # Search with CoinMarketCap API
         logger.info(
             f"{coin_id} not found in CoinGecko. Initiated lookup on CoinMarketCap."
         )
+        coin_market_cap = CoinMarketCap()
         ids = coin_id[0]
         coin_lookup = coin_market_cap.coin_lookup(ids=ids)
         meta_data = coin_market_cap.get_coin_metadata(ids=ids)[ids]
@@ -134,9 +142,6 @@ async def get_coin_stats(coin_id: str) -> dict:
             if link
         ]
 
-        for key in quote:
-            if quote[key] is None:
-                quote[key] = 0
         price = "${:,}".format(quote["price"])
         market_cap = "${:,}".format(quote["market_cap"])
         volume = "${:,}".format(quote["volume_24h"])
@@ -154,9 +159,9 @@ async def get_coin_stats(coin_id: str) -> dict:
                 "market_cap_rank": data["cmc_rank"],
                 "market_cap": market_cap,
                 "volume": volume,
-                "percent_change_24h": percent_change_24h,
-                "percent_change_7d": percent_change_7d,
-                "percent_change_30d": percent_change_30d,
+                "percent_change_24h": percent_change_24h or 0,
+                "percent_change_7d": percent_change_7d or 0,
+                "percent_change_30d": percent_change_30d or 0,
             }
         )
     return coin_stats
@@ -188,40 +193,38 @@ def generate_price_embed(data: dict) -> Embed:
         url=data["website"],
         colour=0xC5E519,
     )
-    embed_message.add_field(
-        name="Explorers 🔗",
-        value=", ".join(data["explorers"]),
-        inline=False,
-    )
-    embed_message.add_field(name="Price 💸", value=data["price"], inline=False)
-    embed_message.add_field(
-        name="Market Cap Rank 🥇",
-        value=data["market_cap_rank"],
-        inline=False,
-    )
-    embed_message.add_field(name="Market Cap 🏦", value=data["market_cap"], inline=False)
-    embed_message.add_field(name="Volume 💰", value=data["volume"], inline=False)
-    embed_message.add_field(
-        name="24H Change 📈" if percent_change_24h > 0 else "24H Change 📉",
-        value=f"{percent_change_24h}%",
-        inline=False,
-    )
-    embed_message.add_field(
-        name="7D Change 📈" if percent_change_7d > 0 else "7D Change 📉",
-        value=f"{percent_change_7d}%",
-        inline=True,
-    )
-    embed_message.add_field(
-        name="30D Change 📈" if percent_change_30d > 0 else "30D Change 📉",
-        value=f"{percent_change_30d}%",
-        inline=True,
-    )
+    fields = [
+        ("Explorers 🔗", ", ".join(data["explorers"]), False),
+        ("Price 💸", data["price"], False),
+        ("Market Cap Rank 🥇", data["market_cap_rank"], False),
+        ("Volume 💰", data["volume"], False),
+        (
+            "24H Change 📈" if percent_change_24h > 0 else "24H Change 📉",
+            f"{percent_change_24h}%",
+            False,
+        ),
+        (
+            "7D Change 📈" if percent_change_7d > 0 else "7D Change 📉",
+            f"{percent_change_7d}%",
+            True,
+        ),
+        (
+            "30D Change 📈" if percent_change_30d > 0 else "30D Change 📉",
+            f"{percent_change_30d}%",
+            True,
+        ),
+    ]
 
     if "percent_change_ath" in data:
         percent_change_ath = data["percent_change_ath"]
-        embed_message.add_field(
-            name="ATH Change 📈" if percent_change_ath > 0 else "ATH Change 📉",
-            value=f"{percent_change_ath}%",
-            inline=True,
+        fields.append(
+            (
+                "ATH Change 📈" if percent_change_ath > 0 else "ATH Change 📉",
+                f"{percent_change_ath}%",
+                True,
+            )
         )
+
+    for field in fields:
+        embed_message.add_field(name=field[0], value=field[1], inline=field[2])
     return embed_message
