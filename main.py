@@ -40,6 +40,11 @@ async def price(
     """
     logger.info("Price command executed")
     pages = []
+    paginator_buttons = [
+        PaginatorButton(button_type="prev", label="", style=ButtonStyle.red, emoji="⬅"),
+        PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True),
+        PaginatorButton(button_type="next", style=ButtonStyle.green, emoji="➡"),
+    ]
 
     try:
         for ids in await get_coin_ids(symbol=symbol.upper()):
@@ -96,33 +101,23 @@ async def price(
                     inline=True,
                 )
             pages.append(embed_message)
-        paginator = Paginator(pages=pages, use_default_buttons=False)
-        paginator.add_button(
-            PaginatorButton(
-                button_type="prev", label="", style=ButtonStyle.red, emoji="⬅"
-            )
-        )
-        paginator.add_button(
-            PaginatorButton("page_indicator", style=ButtonStyle.gray, disabled=True)
-        )
-        paginator.add_button(
-            PaginatorButton(button_type="next", style=ButtonStyle.green, emoji="➡")
+
+        paginator = Paginator(
+            pages=pages, use_default_buttons=False, custom_buttons=paginator_buttons
         )
         await paginator.respond(ctx.interaction)
     except TypeError as e:
         logger.error(e)
-        embed_message = Embed(
-            title=f"Data for ({symbol}) is not available",
-            colour=0xC5E519,
+        await ctx.respond(
+            embed=Embed(title=f"Data for ({symbol}) is not available", colour=0xC5E519)
         )
-        await ctx.respond(embed=embed_message)
     except RequestException as e:
         logger.error(e)
-        embed_message = Embed(
-            title=f"Unable to get data for ({symbol}) at this time",
-            colour=0xC5E519,
+        await ctx.respond(
+            embed=Embed(
+                title=f"Unable to get data for ({symbol}) at this time", colour=0xC5E519
+            )
         )
-        await ctx.respond(embed=embed_message)
 
 
 @bot.slash_command()
