@@ -1,9 +1,10 @@
 from http.client import HTTPException
+from operator import itemgetter
 from typing import List
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 
-from discord import Message
+from discord import Message, Embed
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -169,3 +170,58 @@ async def add_reactions(message: Message, reactions: List[str]) -> None:
     """
     for reaction in reactions:
         await message.add_reaction(reaction)
+
+
+def generate_price_embed(data: dict) -> Embed:
+    """
+    Generates Discord embed message used in price command
+    :param data: Token data
+    :return: Discord embed message
+    """
+    logger.info("Generating price data discord embed")
+    percent_change_24h, percent_change_7d, percent_change_30d = itemgetter(
+        "percent_change_24h", "percent_change_7d", "percent_change_30d"
+    )(data)
+
+    embed_message = Embed(
+        title=f"{data['name']} ({data['symbol']})",
+        url=data["website"],
+        colour=0xC5E519,
+    )
+    embed_message.add_field(
+        name="Explorers 🔗",
+        value=", ".join(data["explorers"]),
+        inline=False,
+    )
+    embed_message.add_field(name="Price 💸", value=data["price"], inline=False)
+    embed_message.add_field(
+        name="Market Cap Rank 🥇",
+        value=data["market_cap_rank"],
+        inline=False,
+    )
+    embed_message.add_field(name="Market Cap 🏦", value=data["market_cap"], inline=False)
+    embed_message.add_field(name="Volume 💰", value=data["volume"], inline=False)
+    embed_message.add_field(
+        name="24H Change 📈" if percent_change_24h > 0 else "24H Change 📉",
+        value=f"{percent_change_24h}%",
+        inline=False,
+    )
+    embed_message.add_field(
+        name="7D Change 📈" if percent_change_7d > 0 else "7D Change 📉",
+        value=f"{percent_change_7d}%",
+        inline=True,
+    )
+    embed_message.add_field(
+        name="30D Change 📈" if percent_change_30d > 0 else "30D Change 📉",
+        value=f"{percent_change_30d}%",
+        inline=True,
+    )
+
+    if "percent_change_ath" in data:
+        percent_change_ath = data["percent_change_ath"]
+        embed_message.add_field(
+            name="ATH Change 📈" if percent_change_ath > 0 else "ATH Change 📉",
+            value=f"{percent_change_ath}%",
+            inline=True,
+        )
+    return embed_message
