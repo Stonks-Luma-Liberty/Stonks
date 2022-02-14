@@ -15,6 +15,11 @@ class MonthlySubmission(Model):
     date_submitted = fields.DateField(default=datetime.date.today())
 
     async def get_randomized_submissions(self, date_range: List[str]) -> List[Model]:
+        """
+        Retrieves submissions and shuffles them returning up to 10 submissions
+        :param date_range: Range between to dates to query the database
+        :return: List of submissions
+        """
         logger.info("Gathering poll submissions")
         submissions = await self.filter(date_submitted__range=date_range)
         shuffle(submissions)

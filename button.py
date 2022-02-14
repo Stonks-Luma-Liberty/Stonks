@@ -19,7 +19,11 @@ class ChartButton(Button):
         self.symbol = symbol
         self.days = days
 
-    async def callback(self, interaction: Interaction):
+    async def callback(self, interaction: Interaction) -> None:
+        """
+        Responds with appropriate token chart data
+        :param interaction: Discord bot interaction
+        """
         market = await self.coin_gecko.coin_market_lookup(
             ids=self.token_ids, time_frame=self.days, base_coin="usd"
         )
