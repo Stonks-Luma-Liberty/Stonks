@@ -172,9 +172,10 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
         date_range=[str(today.replace(day=1)), str(today)]
     )
 
-    for index in range(len(submissions)):
-        tokens += f"{KEYCAP_DIGITS[index]} {submissions[index]}\n\n"
-        reactions.append(KEYCAP_DIGITS[index])
+    for index, submission in enumerate(submissions):
+        reaction = KEYCAP_DIGITS[index]
+        tokens += f"{reaction} {submission}\n\n"
+        reactions.append(reaction)
 
     embed_message.add_field(
         name="Vote for the token of the month! 🗳️", value=tokens, inline=True
