@@ -22,9 +22,7 @@ bot = Bot(allowed_mentions=AllowedMentions(everyone=True))
 
 @bot.event
 async def on_ready() -> None:
-    """
-    Initial setup for discord bot
-    """
+    """Initial setup for discord bot"""
     logging.info(f"{bot.user} successfully logged in!")
 
     await Tortoise.init(db_url=DB_URL, modules={"models": ["models"]})
