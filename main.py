@@ -84,19 +84,25 @@ async def trending(ctx: ApplicationContext) -> None:
     logger.info("Retrieving trending addresses from CoinGecko")
     coin_gecko = CoinGecko()
     coin_market_cap = CoinMarketCap()
+    embed_message = Embed(title="Trending tokens 🔥", colour=0x43CA7E)
 
     coin_gecko_trending_coins = "\n> ".join(await coin_gecko.get_trending_coins())
     coin_market_cap_trending_coins = "\n> ".join(
         await coin_market_cap.get_trending_coins()
     )
 
-    embed_message = Embed(title="Trending tokens 🔥", colour=0x43CA7E)
-    embed_message.add_field(
-        name="CoinGecko", value=f"> {coin_gecko_trending_coins}", inline=False
-    )
-    embed_message.add_field(
-        name="CoinMarketCap", value=f"> {coin_market_cap_trending_coins}", inline=False
-    )
+    try:
+        embed_message.add_field(
+            name="CoinGecko", value=f"> {coin_gecko_trending_coins}", inline=False
+        )
+        embed_message.add_field(
+            name="CoinMarketCap",
+            value=f"> {coin_market_cap_trending_coins}",
+            inline=False,
+        )
+    except RequestException as error:
+        logger.error(error)
+        embed_message.title = "Unable to get trending tokens at this time"
     await ctx.respond(embed=embed_message)
 
 
