@@ -1,0 +1,11 @@
+name: Codiga
+
+on: [push]
+
+jobs:
+  check-quality:
+    runs-on: ubuntu-latest
+    name: A job to check my code quality
+    steps:
+    - name: Codiga GitHub action
+      uses: codiga/github-action@v1
