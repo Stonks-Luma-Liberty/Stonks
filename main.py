@@ -122,11 +122,15 @@ async def chart(
     embed_message = Embed(title="Choose chart to generate", colour=0x338E86)
     view = View(timeout=30)
 
-    coin_ids = await get_coin_ids(symbol=symbol)
+    try:
+        coin_ids = await get_coin_ids(symbol=symbol)
 
-    for ids in coin_ids:
-        view.add_item(item=ChartButton(label=ids, days=days, symbol=symbol))
+        for ids in coin_ids:
+            view.add_item(item=ChartButton(label=ids, days=days, symbol=symbol))
 
+    except RequestException as e:
+        logger.error(e)
+        embed_message.title = "Unable to gather charting data at this moment"
     await ctx.respond(embed=embed_message, view=view)
 
 
