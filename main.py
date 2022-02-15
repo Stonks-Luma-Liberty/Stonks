@@ -128,8 +128,8 @@ async def chart(
         for ids in coin_ids:
             view.add_item(item=ChartButton(label=ids, days=days, symbol=symbol))
 
-    except RequestException as e:
-        logger.error(e)
+    except RequestException as error:
+        logger.error(error)
         embed_message.title = "Unable to gather charting data at this moment"
     await ctx.respond(embed=embed_message, view=view)
 
