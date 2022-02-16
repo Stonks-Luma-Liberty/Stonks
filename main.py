@@ -8,6 +8,7 @@ from discord.ext.pages import Paginator, PaginatorButton
 from discord.ui import View
 from requests.exceptions import RequestException
 from tortoise import Tortoise
+from tortoise.exceptions import BaseORMException
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -154,14 +155,16 @@ async def submit_token(
     """
     today = datetime.date.today()
     logger.info(f"{ctx.user} executed [submit_token] command")
-
-    await MonthlySubmission.create(token_name=token_name, symbol=symbol)
-
-    logger.info("Token submission success")
     embed_message = Embed(
-        title=f"Submitted **{token_name} ({symbol})** to {today.strftime('%B %Y')} drawing",
+        title=f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing",
         colour=0xBAD330,
     )
+    try:
+        await MonthlySubmission.create(token_name=token_name, symbol=symbol)
+        logger.info("Token submission success")
+    except BaseORMException as error:
+        logger.error(error)
+        embed_message.title("Unable to submit token at this time. Try again later")
 
     await ctx.respond(embed=embed_message)
 
