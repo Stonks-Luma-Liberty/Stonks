@@ -156,7 +156,7 @@ async def submit_token(
     today = datetime.date.today()
     logger.info(f"{ctx.user} executed [submit_token] command")
     embed_message = Embed(
-        title=f"Submitted **{token_name} ({symbol})** to {today.strftime('%B %Y')} drawing",
+        title=f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing",
         colour=0xBAD330,
     )
     try:
