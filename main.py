@@ -182,24 +182,30 @@ async def monthly_draw(ctx: ApplicationContext) -> None:
     today = datetime.date.today()
     embed_message = Embed(colour=0x0F3FE5)
 
-    submissions = await MonthlySubmission().get_randomized_submissions(
-        date_range=[str(today.replace(day=1)), str(today)]
-    )
+    try:
+        submissions = await MonthlySubmission().get_randomized_submissions(
+            date_range=[str(today.replace(day=1)), str(today)]
+        )
 
-    for index, submission in enumerate(submissions):
-        reaction = KEYCAP_DIGITS[index]
-        tokens += f"{reaction} {submission}\n\n"
-        reactions.append(reaction)
+        for index, submission in enumerate(submissions):
+            reaction = KEYCAP_DIGITS[index]
+            tokens += f"{reaction} {submission}\n\n"
+            reactions.append(reaction)
 
-    embed_message.add_field(
-        name="Vote for the token of the month! 🗳️", value=tokens, inline=True
-    )
+        embed_message.add_field(
+            name="Vote for the token of the month! 🗳️", value=tokens, inline=True
+        )
 
-    interaction: Interaction = await ctx.respond(
-        content="@everyone", embed=embed_message
-    )
+        interaction: Interaction = await ctx.respond(
+            content="@everyone", embed=embed_message
+        )
 
-    await add_reactions(interaction.channel.last_message, reactions)
+        await add_reactions(interaction.channel.last_message, reactions)
+    except BaseORMException as error:
+        logger.error(error)
+        embed_message.clear_fields()
+        embed_message.title = "Unable to draw at this moment. Try again later"
+        await ctx.respond(embed=embed_message)
 
 
 bot.run(DISCORD_BOT_TOKEN)
