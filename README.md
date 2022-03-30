@@ -1,30 +1,30 @@
 # Stonks
 
-[![Github Issues](https://img.shields.io/github/issues/Stonks-Luma-Liberty/Stonks?logo=github\&style=for-the-badge)](https://github.com/Stonks-Luma-Liberty/Stonks/issues)
-[![Codacy Badge](https://img.shields.io/codacy/grade/16f181495daf491ba11557c00cc8c40f?logo=codacy\&style=for-the-badge)](https://www.codacy.com/gh/Stonks-Luma-Liberty/Stonks/dashboard?utm_source=github.com\&utm_medium=referral\&utm_content=Stonks-Luma-Liberty/Stonks\&utm_campaign=Badge_Grade)
-[![Github Top Language](https://img.shields.io/github/languages/top/Stonks-Luma-Liberty/Stonks?logo=python\&style=for-the-badge)](https://www.python.org)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge)](https://github.com/psf/black)
+[![Github Issues](https://img.shields.io/github/issues/Stonks-Luma-Liberty/Stonks?logo=github&style=for-the-badge)](https://github.com/Stonks-Luma-Liberty/Stonks/issues)
+[![Codacy Badge](https://img.shields.io/codacy/grade/16f181495daf491ba11557c00cc8c40f?logo=codacy&style=for-the-badge)](https://www.codacy.com/gh/Stonks-Luma-Liberty/Stonks/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Stonks-Luma-Liberty/Stonks&utm_campaign=Badge_Grade)
+[![Github Top Language](https://img.shields.io/github/languages/top/Stonks-Luma-Liberty/Stonks?logo=python&style=for-the-badge)](https://www.python.org)
+[![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg?style=for-the-badge)](https://github.com/wemake-services/wemake-python-styleguide)
 
 Cryptocurrency data reporting bot. Extracts data from cryptocurrency market aggregators (CoinGecko/CoinMarketCap) and displays results via discord
 
 ## Table of Contents
 
-*   [Features](#features)
+- [Features](#features)
 
-*   [Environment Variables](#environment-variables)
+- [Environment Variables](#environment-variables)
 
-*   [Run Locally](#run-locally)
+- [Run Locally](#run-locally)
 
-    *   [With Docker](#with-docker)
-    *   [Without Docker](#without-docker)
+  - [With Docker](#with-docker)
+  - [Without Docker](#without-docker)
 
 ## Features
 
-*   Display price data for cryptocurrencies available in CoinGecko/CoinMarketCap
-*   Display charting data for cryptocurrencies available in CoinGecko/CoinMarketCap
-*   Users may submit tokens to monthly drawing to then vote for the token they believe will perform the best
-*   Error handling
-*   Logging
+- Display price data for cryptocurrencies available in CoinGecko/CoinMarketCap
+- Display charting data for cryptocurrencies available in CoinGecko/CoinMarketCap
+- Users may submit tokens to monthly drawing to then vote for the token they believe will perform the best
+- Error handling
+- Logging
 
 ## Environment Variables
 
