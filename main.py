@@ -23,7 +23,7 @@ bot = Bot(allowed_mentions=AllowedMentions(everyone=True))
 
 @bot.event
 async def on_ready() -> None:
-    """Initial setup for discord bot"""
+    """Initialize discord bot."""
     logging.info(f"{bot.user} successfully logged in!")
 
     await Tortoise.init(db_url=DB_URL, modules={"models": ["models"]})
@@ -32,10 +32,11 @@ async def on_ready() -> None:
 
 @bot.slash_command()
 async def price(
-    ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")
+    ctx: ApplicationContext, symbol: Option(str, "Enter token symbol")  # type: ignore
 ) -> None:
     """
-    Displays token price data from CoinGecko/CoinMarketCap
+    Display token price data from CoinGecko/CoinMarketCap.
+
     :param ctx: Discord Bot Application Context
     :param symbol: Cryptocurrency token symbol
     """
@@ -45,7 +46,7 @@ async def price(
     try:
         for ids in await get_coin_ids(symbol=symbol.upper()):
             coin_stats = await get_coin_stats(coin_id=ids)
-            embed_message = generate_price_embed(data=coin_stats)
+            embed_message = generate_price_embed(token_data=coin_stats)
             pages.append(embed_message)
 
         paginator = Paginator(
@@ -62,13 +63,13 @@ async def price(
             ],
         )
         await paginator.respond(ctx.interaction)
-    except TypeError as e:
-        logger.error(e)
+    except TypeError as error:
+        logger.error(error)
         await ctx.respond(
             embed=Embed(title=f"Data for ({symbol}) is not available", colour=0xC5E519)
         )
-    except RequestException as e:
-        logger.error(e)
+    except RequestException as error:
+        logger.error(error)
         await ctx.respond(
             embed=Embed(
                 title=f"Unable to get data for ({symbol}) at this time", colour=0xC5E519
@@ -79,7 +80,8 @@ async def price(
 @bot.slash_command()
 async def trending(ctx: ApplicationContext) -> None:
     """
-    Displays trending tokens on CoinGecko & CoinMarketCap
+    Display trending tokens on CoinGecko & CoinMarketCap.
+
     :param ctx: Discord Bot Application Context
     """
     logger.info("Retrieving trending addresses from CoinGecko")
@@ -110,8 +112,8 @@ async def trending(ctx: ApplicationContext) -> None:
 @bot.slash_command()
 async def chart(
     ctx: ApplicationContext,
-    symbol: Option(str, "Symbol of token to chart"),
-    days: Option(
+    symbol: Option(str, "Symbol of token to chart"),  # type: ignore
+    days: Option(  # type: ignore
         str,
         "Number of days",
         choices=["1", "7", "14", "30", "90", "180", "365", "max"],
@@ -119,7 +121,8 @@ async def chart(
     ),
 ) -> None:
     """
-    Displays token charting data
+    Display token charting data.
+
     :param ctx: Discord Bot Application Context
     :param symbol: Token Symbol
     :param days: Number of days to chart
@@ -144,11 +147,12 @@ async def chart(
 @bot.slash_command()
 async def submit_token(
     ctx: ApplicationContext,
-    token_name: Option(str, "Name of token"),
-    symbol: Option(str, "Symbol of token"),
+    token_name: Option(str, "Name of token"),  # type: ignore
+    symbol: Option(str, "Symbol of token"),  # type: ignore
 ) -> None:
     """
-    Submits token to monthly poll to vote for token of the month
+    Submit token to monthly poll to vote for token of the month.
+
     :param ctx: Discord Bot Application Context
     :param token_name: Name of token
     :param symbol: Symbol of token
@@ -173,7 +177,8 @@ async def submit_token(
 @permissions.has_role("Admin")
 async def monthly_draw(ctx: ApplicationContext) -> None:
     """
-    Creates poll so that users may vote for the token of the month
+    Create poll so that users may vote for the token of the month.
+
     :param ctx: Discord Bot Application Context
     """
     logger.info(f"{ctx.user} executed [submit_token] command")

@@ -9,6 +9,8 @@ from config import logger
 
 
 class MonthlySubmission(Model):
+    """MonthlySubmission database table ORM."""
+
     id = fields.IntField(pk=True)
     token_name = fields.TextField()
     symbol = fields.TextField()
@@ -16,17 +18,31 @@ class MonthlySubmission(Model):
 
     async def get_randomized_submissions(self, date_range: List[str]) -> List[Model]:
         """
-        Retrieves submissions and shuffles them returning up to 10 submissions
+        Retrieve up to 10 randomly picked submissions.
+
         :param date_range: Range between to dates to query the database
         :return: List of submissions
         """
         logger.info("Gathering poll submissions")
-        submissions = await self.filter(date_submitted__range=date_range)
+        submissions: List[MonthlySubmission] = await self.filter(
+            date_submitted__range=date_range
+        )
         shuffle(submissions)
         return submissions[:10]
 
     def __repr__(self):
+        """
+
+        Change model representation.
+
+        :return: Model string repr
+        """
         return f"<MonthlySubmissions: {self.token_name} ({self.symbol})>"
 
     def __str__(self):
+        """
+        Convert model to string.
+
+        :return: Model as string
+        """
         return f"{self.token_name} ({self.symbol})"
