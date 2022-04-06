@@ -1,3 +1,5 @@
+from typing import Any
+
 import aiohttp
 import pandas as pd
 from coinmarketcapapi import CoinMarketCapAPI
@@ -9,11 +11,13 @@ from config import logger
 
 class CoinMarketCap:
     def __init__(self):
+        """Create CoinMarketCap API instance."""
         self.cmc = CoinMarketCapAPI(COIN_MARKET_CAP_API_KEY)
 
     def get_coin_ids(self, symbol: str) -> list:
         """
-        Retrieves coin ids for matching symbol
+        Retrieve coin ids for matching symbol.
+
         Args:
             symbol (str): Token symbol
 
@@ -22,29 +26,29 @@ class CoinMarketCap:
         """
         logger.info("Looking up token ids for %s in CoinMarketCap API", symbol)
         return [
-            (str(item["id"]), item["name"])
-            for item in self.cmc.cryptocurrency_map(symbol=symbol).data
+            (str(token["id"]), token["name"])
+            for token in self.cmc.cryptocurrency_map(symbol=symbol).data
         ]
 
-    def get_coin_metadata(self, ids: str) -> dict:
+    def get_coin_metadata(self, ids: str) -> Any:
         """
-        Retrieves coin metadata
+        Retrieve coin metadata.
+
         Args:
             ids (str): Token id
 
-        Returns (list): Metadata for provided coin ids
-
+        Returns (Any): Metadata for provided coin ids
         """
         return self.cmc.cryptocurrency_info(id=ids).data
 
-    def coin_lookup(self, ids: str) -> dict:
-        """Coin lookup in CoinMarketCap API
+    def coin_lookup(self, ids: str) -> Any:
+        """Coin lookup in CoinMarketCap API.
 
         Args:
             ids (str): CoinMarketCap token ids
 
         Returns:
-            dict: Results of coin lookup
+            Any: Results of coin lookup
         """
         logger.info("Looking up price for %s in CoinMarketCap API", ids)
         return self.cmc.cryptocurrency_quotes_latest(id=ids, convert="usd").data
@@ -52,7 +56,8 @@ class CoinMarketCap:
     @staticmethod
     async def get_trending_coins() -> list:
         """
-        Scalps trending coins from CoinMarketCap website
+        Scalp trending coins from CoinMarketCap website.
+
         Returns (list): Trending coins
 
         """

@@ -25,7 +25,21 @@ tortoise-orm = {extras = ["asyncpg"], version = "^0.18.1"}
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
 pre-commit = "^2.18.1"
+wemake-python-styleguide = "^0.16.1"
+types-requests = "^2.27.16"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+    "requests.*"
+]
+

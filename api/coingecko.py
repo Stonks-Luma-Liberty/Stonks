@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiocoingecko import AsyncCoinGeckoAPISession
 from pandas import DataFrame, to_datetime
 from requests.exceptions import RequestException
@@ -8,22 +10,23 @@ from config import logger
 
 class CoinGecko:
     def __init__(self):
+        """Create CoinGecko API instance."""
         self.cg = AsyncCoinGeckoAPISession()
 
-    async def coin_lookup(self, ids: str, is_address: bool = False) -> dict:
-        """Coin lookup in CoinGecko API
+    async def coin_lookup(self, ids: str, is_address: bool = False) -> Any:
+        """Coin lookup in CoinGecko API.
 
         Args:
             ids (str): id of coin to lookup
             is_address (bool): Indicates if given ids is a crypto address
 
         Returns:
-            dict: Data from CoinGecko API
+            Any: Data from CoinGecko API
         """
         logger.info("Looking up price for %s in CoinGecko API", ids)
         async with self.cg as cg:
             try:
-                data = (
+                token_data = (
                     await cg.get_coin_info_from_contract_address_by_id(
                         platform_id="ethereum", contract_address=ids
                     )
@@ -31,22 +34,23 @@ class CoinGecko:
                     else await cg.get_coin_by_id(coin_id=ids)
                 )
             except ValueError:
-                data = await cg.get_coin_info_from_contract_address_by_id(
+                token_data = await cg.get_coin_info_from_contract_address_by_id(
                     platform_id="binance-smart-chain", contract_address=ids
                 )
             except RequestException:
-                data = (
+                token_data = (
                     await cg.get_coin_info_from_contract_address_by_id(
                         platfomr_id="binance", contract_address=ids
                     )
                     if is_address
-                    else await cg.get_coin_by_id(coin_id=ids)
+                    else await cg.get_coin_by_id(coin_id=ids)  # type: ignore
                 )
-        return data
+        return token_data
 
     async def get_trending_coins(self) -> list:
         """
-        Gets trending coins
+        Get trending coins.
+
         Returns (list): Trending coins
 
         """
@@ -62,7 +66,7 @@ class CoinGecko:
     async def coin_market_lookup(
         self, ids: str, time_frame: str, base_coin: str
     ) -> DataFrame:
-        """Coin lookup in CoinGecko API for Market Chart
+        """Coin lookup in CoinGecko API for Market Chart.
 
         Args:
             ids (str): id of coin to lookup
@@ -70,22 +74,22 @@ class CoinGecko:
             base_coin (str): Indicates base coin
 
         Returns:
-            dict: Data from CoinGecko API
+            DataFrame: Data from CoinGecko API
         """
         logger.info("Looking up chart data for %s in CoinGecko API", ids)
 
         async with self.cg as cg:
-            data = await cg.get_coin_ohlc_by_id(
+            market_data = await cg.get_coin_ohlc_by_id(
                 coin_id=ids, vs_currency=base_coin, days=time_frame
             )
             dataframe = DataFrame(
-                data, columns=["Date", "Open", "High", "Low", "Close"]
+                market_data, columns=["Date", "Open", "High", "Low", "Close"]
             )
             dataframe.Date = to_datetime(dataframe.Date, unit="ms")
             return dataframe
 
     async def get_coin_ids(self, symbol: str) -> list:
-        """Retrieves coin stats from connected services crypto services
+        """Retrieve coin stats from connected services crypto services.
 
         Args:
             symbol (str): Cryptocurrency symbol of coin to lookup

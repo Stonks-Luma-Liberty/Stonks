@@ -13,7 +13,8 @@ from config import logger
 
 def get_coin_explorers(platforms: dict, links: dict) -> list:
     """
-    Locates token explorers and stores them in a list
+    Locate token explorers and stores them in a list.
+
     Args:
         platforms (dict): Chains where token is available
         links (dict): Blockchain sites
@@ -48,7 +49,8 @@ def get_coin_explorers(platforms: dict, links: dict) -> list:
 
 async def get_coin_ids(symbol: str) -> list:
     """
-    Retrieves coin IDs from supported market aggregators
+    Retrieve coin IDs from supported market aggregators.
+
     Args:
         symbol: Token symbol
 
@@ -65,7 +67,7 @@ async def get_coin_ids(symbol: str) -> list:
 
 
 async def get_coin_stats(coin_id: str) -> dict:
-    """Retrieves coin stats from connected services crypto services
+    """Retrieve coin stats from connected services crypto services.
 
     Args:
         coin_id (str): ID of coin to lookup in cryptocurrency market aggregators
@@ -77,12 +79,12 @@ async def get_coin_stats(coin_id: str) -> dict:
     logger.info(f"Getting coin stats for {coin_id}")
     coin_gecko = CoinGecko()
     coin_stats = {}
-    price, all_time_high, market_cap, volume = 0, 0, 0, 0
+    price, all_time_high, market_cap, volume = "0", "0", "0", "0"
     try:
-        data = await coin_gecko.coin_lookup(ids=coin_id)
+        token_data = await coin_gecko.coin_lookup(ids=coin_id)
 
         market_data, links, platforms = itemgetter("market_data", "links", "platforms")(
-            data
+            token_data
         )
         (
             percent_change_24h,
@@ -108,8 +110,8 @@ async def get_coin_stats(coin_id: str) -> dict:
 
         coin_stats.update(
             {
-                "name": data["name"],
-                "symbol": data["symbol"].upper(),
+                "name": token_data["name"],
+                "symbol": token_data["symbol"].upper(),
                 "website": links["homepage"][0],
                 "explorers": explorers,
                 "price": price,
@@ -133,9 +135,9 @@ async def get_coin_stats(coin_id: str) -> dict:
         ids = coin_id[0]
         coin_lookup = coin_market_cap.coin_lookup(ids=ids)
         meta_data = coin_market_cap.get_coin_metadata(ids=ids)[ids]
-        data = coin_lookup[ids]
+        token_data = coin_lookup[ids]
         urls = meta_data["urls"]
-        quote = data["quote"]["USD"]
+        quote = token_data["quote"]["USD"]
         explorers = [
             f"[{urlparse(link).hostname.split('.')[0]}]({link})"
             for link in urls["explorer"]
@@ -151,12 +153,12 @@ async def get_coin_stats(coin_id: str) -> dict:
 
         coin_stats.update(
             {
-                "name": data["name"],
-                "symbol": data["symbol"],
+                "name": token_data["name"],
+                "symbol": token_data["symbol"],
                 "website": urls["website"][0],
                 "explorers": explorers,
                 "price": price,
-                "market_cap_rank": data["cmc_rank"],
+                "market_cap_rank": token_data["cmc_rank"],
                 "market_cap": market_cap,
                 "volume": volume,
                 "percent_change_24h": percent_change_24h or 0,
@@ -169,7 +171,8 @@ async def get_coin_stats(coin_id: str) -> dict:
 
 async def add_reactions(message: Message, reactions: List[str]) -> None:
     """
-    Adds reactions to message
+    Add reactions to message.
+
     :param message: Discord Message
     :param reactions: List of reactions to add to message
     """
@@ -177,27 +180,28 @@ async def add_reactions(message: Message, reactions: List[str]) -> None:
         await message.add_reaction(reaction)
 
 
-def generate_price_embed(data: dict) -> Embed:
+def generate_price_embed(token_data: dict) -> Embed:
     """
-    Generates Discord embed message used in price command
-    :param data: Token data
+    Generate Discord embed message used in price command.
+
+    :param token_data: Token data
     :return: Discord embed message
     """
     logger.info("Generating price data discord embed")
     percent_change_24h, percent_change_7d, percent_change_30d = itemgetter(
         "percent_change_24h", "percent_change_7d", "percent_change_30d"
-    )(data)
+    )(token_data)
 
     embed_message = Embed(
-        title=f"{data['name']} ({data['symbol']})",
-        url=data["website"],
+        title=f"{token_data['name']} ({token_data['symbol']})",
+        url=token_data["website"],
         colour=0xC5E519,
     )
     fields = [
-        ("Explorers 🔗", ", ".join(data["explorers"]), False),
-        ("Price 💸", data["price"], False),
-        ("Market Cap Rank 🥇", data["market_cap_rank"], False),
-        ("Volume 💰", data["volume"], False),
+        ("Explorers 🔗", ", ".join(token_data["explorers"]), False),
+        ("Price 💸", token_data["price"], False),
+        ("Market Cap Rank 🥇", token_data["market_cap_rank"], False),
+        ("Volume 💰", token_data["volume"], False),
         (
             "24H Change 📈" if percent_change_24h > 0 else "24H Change 📉",
             f"{percent_change_24h}%",
@@ -215,8 +219,8 @@ def generate_price_embed(data: dict) -> Embed:
         ),
     ]
 
-    if "percent_change_ath" in data:
-        percent_change_ath = data["percent_change_ath"]
+    if "percent_change_ath" in token_data:
+        percent_change_ath = token_data["percent_change_ath"]
         fields.append(
             (
                 "ATH Change 📈" if percent_change_ath > 0 else "ATH Change 📉",
