@@ -1,4 +1,4 @@
-FROM python:3.10.3-slim-bullseye
+FROM python:3.11.0a6-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH='/Stonks'
