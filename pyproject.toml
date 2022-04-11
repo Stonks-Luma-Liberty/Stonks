@@ -21,7 +21,7 @@ plotly = "^5.5.0"
 inflection = "^0.5.1"
 kaleido = [{ version = "<=0.2.1", platform = "win32" }, { version = "0.2.1.post1", platform = "linux" }]
 tortoise-orm = {extras = ["asyncpg"], version = "^0.18.1"}
-coinmarketcap_utils = [{ file = "coinmarketcap_utils/target/wheels/coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl", platform = "windows"}, {file = "coinmarketcap_utils/target/wheels/coinmarketcap_utils-0.1.0-cp39-cp39-manylinux_2_28_armv7l.whl", platform = "linux"}]
+coinmarketcap_utils = [{ file = "coinmarketcap_utils/target/wheels/coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl", platform = "win32"}, {file = "coinmarketcap_utils/target/wheels/coinmarketcap_utils-0.1.0-cp39-cp39-manylinux_2_28_armv7l.whl", platform = "linux"}]
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
