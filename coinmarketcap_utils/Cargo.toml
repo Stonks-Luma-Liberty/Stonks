@@ -1,0 +1,14 @@
+[package]
+name = "coinmarketcap_utils"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "coinmarketcap_utils"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.16.3", features = ["extension-module"] }
+reqwest = { version = "0.11.10", features = ["gzip", "blocking"] }
+select = { version = "0.5.0" }
