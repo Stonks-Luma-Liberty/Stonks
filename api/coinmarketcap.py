@@ -1,10 +1,8 @@
 from typing import Any
 
-import aiohttp
-import pandas as pd
+from coinmarketcap_utils.coinmarketcap_utils import get_trending_tokens
 from coinmarketcapapi import CoinMarketCapAPI
 
-from api import HEADERS
 from config import COIN_MARKET_CAP_API_KEY
 from config import logger
 
@@ -62,18 +60,4 @@ class CoinMarketCap:
 
         """
         logger.info("Retrieving trending coins from CoinMarketCap")
-        coins = []
-        async with aiohttp.ClientSession() as session, session.get(
-            "https://coinmarketcap.com/trending-cryptocurrencies/", headers=HEADERS
-        ) as response:
-            df = pd.read_html(await response.text(), flavor="bs4")[0]
-
-            for row in df.itertuples():
-                if row.Index > 6:
-                    break
-                name = row.Name.replace(f"{row.Index + 1}", " ")
-                words = name.split()
-                words[-1] = f"({words[-1]})"
-                coin = " ".join(words)
-                coins.append(coin)
-        return coins
+        return get_trending_tokens()[:7]  # type: ignore
