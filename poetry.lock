@@ -222,7 +222,7 @@ python-versions = ">=3.6"
 
 [package.source]
 type = "file"
-url = "coinmarketcap_utils/binaries/coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl"
+url = "coinmarketcap_utils/binaries/coinmarketcap_utils-0.1.0.tar.gz"
 
 [[package]]
 name = "colorama"
@@ -985,7 +985,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "https://github.com/Pycord-Development/pycord.git"
 reference = "master"
-resolved_reference = "a3e1dd0d94e0183a2b3f3a8025c509a7e9cd62cf"
+resolved_reference = "b099fa628492624d658287b9ed6aadabb574e069"
 
 [[package]]
 name = "pycodestyle"
@@ -1426,7 +1426,7 @@ python-versions = "~=3.5"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "d9fb1f3c30d73fb58d4b15e14d85d0dd1708e65db5b8a04ba40f6051db344b81"
+content-hash = "4aa36225f59caecfb168520258b7795026db5ad59cbbacd3d0be0a6bd6e4d94d"
 
 [metadata.files]
 aiocoingecko = [
@@ -1591,7 +1591,7 @@ click = [
     {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
 ]
 coinmarketcap_utils = [
-    {file = "coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl", hash = "sha256:43019c942836eef594c227cebb1af17886b3ea6ec5d52a980f78428cd930379e"},
+    {file = "coinmarketcap_utils-0.1.0.tar.gz", hash = "sha256:b5863a5a186dd14f222f2348067cacb412ae3bfe7458dd4f14d8688cbb4609c3"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
