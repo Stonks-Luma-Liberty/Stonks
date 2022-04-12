@@ -213,6 +213,18 @@ python-versions = ">=3.7"
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
+name = "coinmarketcap_utils"
+version = "0.1.0"
+description = ""
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.source]
+type = "file"
+url = "coinmarketcap_utils/binaries/coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl"
+
+[[package]]
 name = "colorama"
 version = "0.4.4"
 description = "Cross-platform colored terminal text."
@@ -1414,7 +1426,7 @@ python-versions = "~=3.5"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3f31f5f8e641ed7dbd842d60e561cfe86679e43818078c9138d0009919bbfdb1"
+content-hash = "d9fb1f3c30d73fb58d4b15e14d85d0dd1708e65db5b8a04ba40f6051db344b81"
 
 [metadata.files]
 aiocoingecko = [
@@ -1577,6 +1589,9 @@ charset-normalizer = [
 click = [
     {file = "click-8.1.2-py3-none-any.whl", hash = "sha256:24e1a4a9ec5bf6299411369b208c1df2188d9eb8d916302fe6bf03faed227f1e"},
     {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
+]
+coinmarketcap_utils = [
+    {file = "coinmarketcap_utils-0.1.0-cp38-none-win_amd64.whl", hash = "sha256:43019c942836eef594c227cebb1af17886b3ea6ec5d52a980f78428cd930379e"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
