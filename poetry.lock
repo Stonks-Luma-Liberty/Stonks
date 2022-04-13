@@ -222,7 +222,7 @@ python-versions = ">=3.6"
 
 [package.source]
 type = "file"
-url = "coinmarketcap_utils/binaries/coinmarketcap_utils-0.1.0.tar.gz"
+url = "coinmarketcap_utils/dist/coinmarketcap_utils-0.1.0.tar.gz"
 
 [[package]]
 name = "colorama"
@@ -782,13 +782,12 @@ python-versions = "*"
 name = "maturin"
 version = "0.12.12"
 description = "Build and publish crates with pyo3, rust-cpython and cffi bindings as well as rust binaries as python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
 tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
-ziglang = {version = ">=0.9.0,<0.10.0", optional = true, markers = "extra == \"zig\""}
 
 [package.extras]
 patchelf = ["patchelf"]
@@ -985,7 +984,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "https://github.com/Pycord-Development/pycord.git"
 reference = "master"
-resolved_reference = "b099fa628492624d658287b9ed6aadabb574e069"
+resolved_reference = "9116cb2ea5bec10b62e890ee39f8c1c16249662a"
 
 [[package]]
 name = "pycodestyle"
@@ -1229,7 +1228,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "1.2.3"
 description = "A lil' TOML parser"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -1415,18 +1414,10 @@ python-versions = ">=3.6"
 idna = ">=2.0"
 multidict = ">=4.0"
 
-[[package]]
-name = "ziglang"
-version = "0.9.1"
-description = "Zig is a general-purpose programming language and toolchain for maintaining robust, optimal, and reusable software."
-category = "main"
-optional = false
-python-versions = "~=3.5"
-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4aa36225f59caecfb168520258b7795026db5ad59cbbacd3d0be0a6bd6e4d94d"
+content-hash = "43a59cc8317c2803f76de9b47f22ffa8e19a79377ca04570671c5ca59d8b2cb9"
 
 [metadata.files]
 aiocoingecko = [
@@ -1591,7 +1582,7 @@ click = [
     {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
 ]
 coinmarketcap_utils = [
-    {file = "coinmarketcap_utils-0.1.0.tar.gz", hash = "sha256:b5863a5a186dd14f222f2348067cacb412ae3bfe7458dd4f14d8688cbb4609c3"},
+    {file = "coinmarketcap_utils-0.1.0.tar.gz", hash = "sha256:27dfd3d42f28744577c49074a83583b3d1000919d3ce0172f9cb68ada815aa45"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
@@ -2363,14 +2354,4 @@ yarl = [
     {file = "yarl-1.7.2-cp39-cp39-win32.whl", hash = "sha256:1edc172dcca3f11b38a9d5c7505c83c1913c0addc99cd28e993efeaafdfaa18d"},
     {file = "yarl-1.7.2-cp39-cp39-win_amd64.whl", hash = "sha256:797c2c412b04403d2da075fb93c123df35239cd7b4cc4e0cd9e5839b73f52c58"},
     {file = "yarl-1.7.2.tar.gz", hash = "sha256:45399b46d60c253327a460e99856752009fcee5f5d3c80b2f7c0cae1c38d56dd"},
-]
-ziglang = [
-    {file = "ziglang-0.9.1-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:fedce198fdaace4e8abb89c1a77e25023bb79dec8c30b54e7658dec3f01e9b62"},
-    {file = "ziglang-0.9.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:0a308fa651484a8660e315a53fd7d5c7e8d0b3c4ca3f591f60dab727b1a7bb34"},
-    {file = "ziglang-0.9.1-py3-none-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:819e8e48504d5b6c1a0b2d9e20c714f13c7f27ec982fa2c5adea62935ab17310"},
-    {file = "ziglang-0.9.1-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:fa1d08040e2b9a7aab40b0c14e1baf52097e845ea7a6801462ec593f48cf3431"},
-    {file = "ziglang-0.9.1-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4fee74a60826fd41a623d535c7a9e6130207e320aede0a9d25b9e5b948e5fe3e"},
-    {file = "ziglang-0.9.1-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:3517b877e9026840dcaee2df4478980389e792881e81fb026f65e57c69a02f23"},
-    {file = "ziglang-0.9.1-py3-none-win32.whl", hash = "sha256:f58f62e0adffe1adcc150d43490e0141496e469d4c5461611cebe56558b95e77"},
-    {file = "ziglang-0.9.1-py3-none-win_amd64.whl", hash = "sha256:bf039d83321ae9957c3688021b9975c60171ffc8ba2b89046fdb08e0d43ddbdb"},
 ]
