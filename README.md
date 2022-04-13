@@ -58,6 +58,18 @@ Go to the project directory
   cd Stonks
 ```
 
+Install maturin
+
+```bash
+pip install maturin
+```
+
+Build python rust module
+
+```bash
+maturin build -m coinmarketcap_utils/Cargo.toml -r -o coinmarketcap_utils/dist
+```
+
 ### With Docker
 
 Use docker-compose to start the bot
