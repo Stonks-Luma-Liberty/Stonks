@@ -72,6 +72,16 @@ maturin build -m coinmarketcap_utils/Cargo.toml -r -o coinmarketcap_utils/dist
 
 ### With Docker
 
+Generate requirements.txt file
+
+```bash
+poetry export -f requirements.txt -o requirements.txt --without-hashes
+```
+
+Edit requirements.txt file (Specifically coinmarketcap_utils package).
+
+coinmarketcap-utils @ file:///Stonks/coinmarketcap_utils/dist/coinmarketcap_utils-0.1.0.tar.gz
+
 Use docker-compose to start the bot
 
 ```bash
