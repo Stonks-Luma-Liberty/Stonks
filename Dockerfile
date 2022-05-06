@@ -7,10 +7,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     useradd -ms /bin/bash stonks_user
-#RUN mkdir "/home/stonks_user" && \
-#    groupadd -r stonks_user && \
-#    useradd -r -g stonks_user -d /home/stonks_user -s /sbin/nologin -c "Docker image user" stonks_user \
-#RUN chmod g+rwx ~stonks_user/
 USER stonks_user
 ENV HOME="/home/stonks_user"
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
