@@ -1,27 +1,20 @@
 import logging
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-log_folder = Path.home().joinpath("logs")
-Path(log_folder).mkdir(parents=True, exist_ok=True)
-log_file = log_folder.joinpath("stonks.log")
-
-if not log_file.exists():
-    open(log_file, "w").close()
-
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
-    handlers=[logging.FileHandler(log_file, mode="w+"), logging.StreamHandler()],
+    handlers=[logging.StreamHandler()],
 )
 
 logger = logging.getLogger(__name__)
 
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+DISCORD_GUILD_GUIDS = os.getenv("DISCORD_GUILD_GUIDS", "").split(",")
 COIN_MARKET_CAP_API_KEY = os.getenv("COIN_MARKET_CAP_API_KEY")
 
 # Database Settings

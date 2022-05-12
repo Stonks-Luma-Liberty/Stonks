@@ -7,7 +7,6 @@ authors = ["Christian Pérez Villanueva <perez.villanueva.christian34@gmail.com>
 [tool.poetry.dependencies]
 python = "^3.8"
 python-dotenv = "^0.19.2"
-py-cord = {git = "https://github.com/Pycord-Development/pycord.git"}
 aiocoingecko = "^1.0.0"
 requests = "^2.27.1"
 lru-dict = "^1.1.7"
@@ -22,6 +21,7 @@ inflection = "^0.5.1"
 kaleido = [{ version = "<=0.2.1", platform = "win32" }, { version = "0.2.1.post1", platform = "linux" }]
 tortoise-orm = {extras = ["asyncpg"], version = "^0.18.1"}
 coinmarketcap_utils = {file = "coinmarketcap_utils/dist/coinmarketcap_utils-0.1.0.tar.gz"}
+py-cord = {git = "https://github.com/Pycord-Development/pycord.git"}
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
