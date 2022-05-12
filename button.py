@@ -61,7 +61,9 @@ class ChartButton(Button):
         await interaction.response.send_message(
             file=File(
                 BufferedReader(
-                    BytesIO(to_image(fig, format="png", engine="kaleido")).raw
+                    BytesIO(  # type: ignore
+                        to_image(fig, format="png", engine="kaleido")
+                    )
                 ),
                 filename=f"{tempfile.NamedTemporaryFile()}.png",
             )
