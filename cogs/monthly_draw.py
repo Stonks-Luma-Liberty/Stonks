@@ -40,7 +40,7 @@ class MonthlyDraw(Cog):
         :param symbol: Symbol of token
         """
         today = datetime.date.today()
-        logger.info(f"{ctx.user} executed [submit_token] command")
+        logger.info("%s executed [submit_token] command", ctx.user)
         title = (
             f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing"
         )
@@ -65,7 +65,7 @@ class MonthlyDraw(Cog):
 
         :param ctx: Discord Bot Application Context
         """
-        logger.info(f"{ctx.user} executed [submit_token] command")
+        logger.info("%s executed [submit_token] command", ctx.user)
         reactions = []
         tokens = ""
         today = datetime.date.today()
