@@ -13,13 +13,17 @@ class MonthlySubmission(Model):
 
     id = fields.IntField(pk=True)
     token_name = fields.TextField()
+    description = fields.TextField()
     symbol = fields.TextField()
     date_submitted = fields.DateField(default=datetime.date.today())
 
-    async def get_randomized_submissions(self, date_range: List[str]) -> List[Model]:
+    async def get_randomized_submissions(
+        self, date_range: List[str]
+    ) -> List["MonthlySubmission"]:
         """
         Retrieve up to 10 randomly picked submissions.
 
+        :rtype: object
         :param date_range: Range between to dates to query the database
         :return: List of submissions
         """
