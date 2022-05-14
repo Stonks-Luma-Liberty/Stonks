@@ -53,6 +53,9 @@ class MonthlyDraw(Cog):
             title=title,
             colour=0xBAD330,
         )
+
+        await ctx.defer()
+
         try:
             await MonthlySubmission.create(
                 token_name=token_name, symbol=symbol, description=description
@@ -78,6 +81,8 @@ class MonthlyDraw(Cog):
         embed_message = Embed(
             colour=0x0F3FE5, title="Vote for the token of the month! 🗳️"
         )
+
+        await ctx.defer()
 
         try:
             submissions = await MonthlySubmission().get_randomized_submissions(
