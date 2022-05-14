@@ -7,4 +7,4 @@ services:
     volumes:
       - .:/stonks_bot
     ports:
-      - 8000:8000
+      - "8000:8000"

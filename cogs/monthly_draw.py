@@ -29,8 +29,13 @@ class MonthlyDraw(Cog):
     @slash_command(guild_ids=DISCORD_GUILD_GUIDS)
     @option(name="token_name", description="Enter token name", required=True)
     @option(name="symbol", description="Enter token symbol", required=True)
+    @option(
+        name="description",
+        description="Enter alpha as to why this token should be bought",
+        required=True,
+    )
     async def submit_token(
-        self, ctx: ApplicationContext, token_name: str, symbol: str
+        self, ctx: ApplicationContext, token_name: str, symbol: str, description: str
     ) -> None:
         """
         Submit token to monthly poll to vote for token of the month.
@@ -49,7 +54,9 @@ class MonthlyDraw(Cog):
             colour=0xBAD330,
         )
         try:
-            await MonthlySubmission.create(token_name=token_name, symbol=symbol)
+            await MonthlySubmission.create(
+                token_name=token_name, symbol=symbol, description=description
+            )
             logger.info("Token submission success")
         except BaseORMException as error:
             logger.error(error)
@@ -67,9 +74,10 @@ class MonthlyDraw(Cog):
         """
         logger.info("%s executed [submit_token] command", ctx.user)
         reactions = []
-        tokens = ""
         today = datetime.date.today()
-        embed_message = Embed(colour=0x0F3FE5)
+        embed_message = Embed(
+            colour=0x0F3FE5, title="Vote for the token of the month! 🗳️"
+        )
 
         try:
             submissions = await MonthlySubmission().get_randomized_submissions(
@@ -78,12 +86,12 @@ class MonthlyDraw(Cog):
 
             for index, submission in enumerate(submissions):
                 reaction = KEYCAP_DIGITS[index]
-                tokens += f"{reaction} {submission}\n\n"
+                embed_message.add_field(
+                    name=f"{reaction} {submission}",
+                    value=submission.description,
+                    inline=False,
+                )
                 reactions.append(reaction)
-
-            embed_message.add_field(
-                name="Vote for the token of the month! 🗳️", value=tokens, inline=True
-            )
 
             interaction: Interaction = await ctx.respond(
                 content="@everyone", embed=embed_message
