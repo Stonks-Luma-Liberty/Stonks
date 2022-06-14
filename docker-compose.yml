@@ -3,6 +3,7 @@ services:
 
   stonks_bot:
     build: .
+    restart: unless-stopped
     command: bash -c "python main.py"
     volumes:
       - .:/stonks_bot
