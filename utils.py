@@ -4,7 +4,7 @@ from typing import List
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 
-from discord import Message, Embed
+from discord import Embed, Interaction
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -169,12 +169,14 @@ async def get_coin_stats(coin_id: str) -> dict:
     return coin_stats
 
 
-async def add_reactions(message: Message, reactions: List[str]) -> None:
+async def add_reactions(message: Interaction, reactions: List[str]) -> None:
     """
-    Add reactions to message.
+    Add reactions to a message.
 
-    :param message: Discord Message
-    :param reactions: List of reactions to add to message
+    :param message: The message to add reactions to
+    :type message: Interaction
+    :param reactions: A list of reactions to add to the message
+    :type reactions: List[str]
     """
     for reaction in reactions:
         await message.add_reaction(reaction)
