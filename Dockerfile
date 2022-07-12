@@ -4,7 +4,7 @@ ENV PYTHONPATH='/Stonks'
 COPY . /Stonks
 WORKDIR /Stonks
 RUN apt-get update && apt-get -y upgrade && apt-get -y install curl build-essential libssl-dev pkg-config patchelf \
-    && curl https://sh.rustup.rs -sSf | bash -s -- -y
+    && apt-get clean && rm -rf /var/lib/apt/lists/*curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
