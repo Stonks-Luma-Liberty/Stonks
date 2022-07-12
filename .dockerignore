@@ -6,6 +6,6 @@ ENV/
 env.bak/
 venv.bak/
 
+.idea
 .github/
 .mypy_cache/
-coinmarketcap_utils/target

@@ -101,8 +101,7 @@ class MonthlyDraw(Cog):
             interaction: Interaction = await ctx.respond(
                 content="@everyone", embed=embed_message
             )
-
-            await add_reactions(interaction.channel.last_message, reactions)
+            await add_reactions(interaction, reactions)
         except BaseORMException as error:
             logger.error(error)
             embed_message.clear_fields()

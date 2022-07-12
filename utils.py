@@ -1,10 +1,10 @@
 from http.client import HTTPException
 from operator import itemgetter
-from typing import List
+from typing import List, Dict, Any
 from urllib.error import HTTPError
 from urllib.parse import urlparse
 
-from discord import Message, Embed
+from discord import Embed, Interaction
 
 from api.coingecko import CoinGecko
 from api.coinmarketcap import CoinMarketCap
@@ -66,7 +66,7 @@ async def get_coin_ids(symbol: str) -> list:
     return coin_ids
 
 
-async def get_coin_stats(coin_id: str) -> dict:
+async def get_coin_stats(coin_id: str) -> Dict[str, Any]:
     """Retrieve coin stats from connected services crypto services.
 
     Args:
@@ -78,7 +78,7 @@ async def get_coin_stats(coin_id: str) -> dict:
     # Search with CoinGecko API
     logger.info(f"Getting coin stats for {coin_id}")
     coin_gecko = CoinGecko()
-    coin_stats = {}
+    coin_stats: Dict[str, Any] = {}
     price, all_time_high, market_cap, volume = "0", "0", "0", "0"
     try:
         token_data = await coin_gecko.coin_lookup(ids=coin_id)
@@ -103,10 +103,10 @@ async def get_coin_stats(coin_id: str) -> dict:
         explorers = get_coin_explorers(platforms=platforms, links=links)
 
         if "usd" in market_data["current_price"]:
-            price = "${:,}".format(float(market_data["current_price"]["usd"]))
-            all_time_high = "${:,}".format(float(market_data["ath"]["usd"]))
-            market_cap = "${:,}".format(float(market_data["market_cap"]["usd"]))
-            volume = "${:,}".format(float(market_data["total_volume"]["usd"]))
+            price = f"${float(market_data['current_price']['usd']):,}"
+            all_time_high = f"${float(market_data['ath']['usd']):,}"
+            market_cap = f"${float(market_data['market_cap']['usd']):,}"
+            volume = f"${float(market_data['total_volume']['usd']):,}"
 
         coin_stats.update(
             {
@@ -144,9 +144,9 @@ async def get_coin_stats(coin_id: str) -> dict:
             if link
         ]
 
-        price = "${:,}".format(quote["price"])
-        market_cap = "${:,}".format(quote["market_cap"])
-        volume = "${:,}".format(quote["volume_24h"])
+        price = f"${quote['price']:,}"
+        market_cap = f"${quote['market_cap']:,}"
+        volume = f"${quote['volume_24h']:,}"
         percent_change_24h = quote["percent_change_24h"]
         percent_change_7d = quote["percent_change_7d"]
         percent_change_30d = quote["percent_change_30d"]
@@ -166,15 +166,18 @@ async def get_coin_stats(coin_id: str) -> dict:
                 "percent_change_30d": percent_change_30d or 0,
             }
         )
+
     return coin_stats
 
 
-async def add_reactions(message: Message, reactions: List[str]) -> None:
+async def add_reactions(message: Interaction, reactions: List[str]) -> None:
     """
-    Add reactions to message.
+    Add reactions to a message.
 
-    :param message: Discord Message
-    :param reactions: List of reactions to add to message
+    :param message: The message to add reactions to
+    :type message: Interaction
+    :param reactions: A list of reactions to add to the message
+    :type reactions: List[str]
     """
     for reaction in reactions:
         await message.add_reaction(reaction)
