@@ -108,23 +108,22 @@ async def get_coin_stats(coin_id: str) -> Dict[str, Any]:
             market_cap = f"${float(market_data['market_cap']['usd']):,}"
             volume = f"${float(market_data['total_volume']['usd']):,}"
 
-        coin_stats.update(
-            {
-                "name": token_data["name"],
-                "symbol": token_data["symbol"].upper(),
-                "website": links["homepage"][0],
-                "explorers": explorers,
-                "price": price,
-                "ath": all_time_high,
-                "market_cap_rank": market_cap_rank,
-                "market_cap": market_cap,
-                "volume": volume,
-                "percent_change_24h": percent_change_24h or 0,
-                "percent_change_7d": percent_change_7d or 0,
-                "percent_change_30d": percent_change_30d or 0,
-                "percent_change_ath": percent_change_ath or 0,
-            }
-        )
+        coin_stats |= {
+            "name": token_data["name"],
+            "symbol": token_data["symbol"].upper(),
+            "website": links["homepage"][0],
+            "explorers": explorers,
+            "price": price,
+            "ath": all_time_high,
+            "market_cap_rank": market_cap_rank,
+            "market_cap": market_cap,
+            "volume": volume,
+            "percent_change_24h": percent_change_24h or 0,
+            "percent_change_7d": percent_change_7d or 0,
+            "percent_change_30d": percent_change_30d or 0,
+            "percent_change_ath": percent_change_ath or 0,
+        }
+
 
     except (IndexError, HTTPError, HTTPException):
         # Search with CoinMarketCap API
@@ -151,21 +150,20 @@ async def get_coin_stats(coin_id: str) -> Dict[str, Any]:
         percent_change_7d = quote["percent_change_7d"]
         percent_change_30d = quote["percent_change_30d"]
 
-        coin_stats.update(
-            {
-                "name": token_data["name"],
-                "symbol": token_data["symbol"],
-                "website": urls["website"][0],
-                "explorers": explorers,
-                "price": price,
-                "market_cap_rank": token_data["cmc_rank"],
-                "market_cap": market_cap,
-                "volume": volume,
-                "percent_change_24h": percent_change_24h or 0,
-                "percent_change_7d": percent_change_7d or 0,
-                "percent_change_30d": percent_change_30d or 0,
-            }
-        )
+        coin_stats |= {
+            "name": token_data["name"],
+            "symbol": token_data["symbol"],
+            "website": urls["website"][0],
+            "explorers": explorers,
+            "price": price,
+            "market_cap_rank": token_data["cmc_rank"],
+            "market_cap": market_cap,
+            "volume": volume,
+            "percent_change_24h": percent_change_24h or 0,
+            "percent_change_7d": percent_change_7d or 0,
+            "percent_change_30d": percent_change_30d or 0,
+        }
+
 
     return coin_stats
 
