@@ -45,9 +45,10 @@ class MonthlyDraw(Cog):
         :param symbol: Symbol of token
         """
         today = datetime.date.today()
+        next_month = (today.replace(day=1) + datetime.timedelta(days=32)).replace(day=1)
         logger.info("%s executed [submit_token] command", ctx.user)
         title = (
-            f"Submitted {token_name} ({symbol}) to {today.strftime('%B %Y')} drawing"
+            f"Submitted {token_name} ({symbol}) to {next_month.strftime('%B %Y')} drawing"
         )
         embed_message = Embed(
             title=title,
