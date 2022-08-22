@@ -40,6 +40,7 @@ class MonthlyDraw(Cog):
         """
         Submit token to monthly poll to vote for token of the month.
 
+        :param description: Brief summary indicating some information as to why this token should be voted for
         :param ctx: Discord Bot Application Context
         :param token_name: Name of token
         :param symbol: Symbol of token
@@ -47,9 +48,7 @@ class MonthlyDraw(Cog):
         today = datetime.date.today()
         next_month = (today.replace(day=1) + datetime.timedelta(days=32)).replace(day=1)
         logger.info("%s executed [submit_token] command", ctx.user)
-        title = (
-            f"Submitted {token_name} ({symbol}) to {next_month.strftime('%B %Y')} drawing"
-        )
+        title = f"Submitted {token_name} ({symbol}) to {next_month.strftime('%B %Y')} drawing"
         embed_message = Embed(
             title=title,
             colour=0xBAD330,
