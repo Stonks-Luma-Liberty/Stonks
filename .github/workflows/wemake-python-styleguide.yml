@@ -21,4 +21,4 @@ jobs:
       with:
         python-version: "3.8"
     - name: wemake-python-styleguide
-      uses: wemake-services/wemake-python-styleguide@0.16.1
+      uses: wemake-services/wemake-python-styleguide@0.17.0
