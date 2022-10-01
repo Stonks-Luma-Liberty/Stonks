@@ -54,10 +54,13 @@ class MonthlyDraw(Cog):
         await ctx.defer()
 
         try:
-            submission_exists = bool(await MonthlySubmission().filter(
-                Q(date_submitted__gte=str(today.replace(day=1))) &
-                Q(token_name__iexact=token_name) &
-            Q(symbol__iexact=symbol)))
+            submission_exists = bool(
+                await MonthlySubmission().filter(
+                    Q(date_submitted__gte=str(today.replace(day=1)))
+                    & Q(token_name__iexact=token_name)
+                    & Q(symbol__iexact=symbol)
+                )
+            )
 
             if not submission_exists:
                 await MonthlySubmission.create(
