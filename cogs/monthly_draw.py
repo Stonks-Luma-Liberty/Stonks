@@ -10,6 +10,7 @@ from discord import (
 )
 from discord.ext.commands import Cog
 from tortoise.exceptions import BaseORMException
+from tortoise.queryset import Q
 
 from config import DISCORD_GUILD_GUIDS, logger
 from constants import KEYCAP_DIGITS
@@ -48,22 +49,30 @@ class MonthlyDraw(Cog):
         today = datetime.date.today()
         next_month = (today.replace(day=1) + datetime.timedelta(days=32)).replace(day=1)
         logger.info("%s executed [submit_token] command", ctx.user)
-        title = f"Submitted {token_name} ({symbol}) to {next_month.strftime('%B %Y')} drawing"
-        embed_message = Embed(
-            title=title,
-            colour=0xBAD330,
-        )
+        title = f"{token_name} ({symbol}) previously submitted"
 
         await ctx.defer()
 
         try:
-            await MonthlySubmission.create(
-                token_name=token_name, symbol=symbol, description=description
-            )
-            logger.info("Token submission success")
+            submission_exists = bool(await MonthlySubmission().filter(
+                Q(date_submitted__gte=str(today.replace(day=1))) &
+                Q(token_name__iexact=token_name) &
+            Q(symbol__iexact=symbol)))
+
+            if not submission_exists:
+                await MonthlySubmission.create(
+                    token_name=token_name, symbol=symbol, description=description
+                )
+                title = f"Submitted {token_name} ({symbol}) to {next_month.strftime('%B %Y')} drawing"
+                logger.info("Token submission success")
         except BaseORMException as error:
             logger.error(error)
-            embed_message.title("Unable to submit token at this time. Try again later")
+            title = "Unable to submit token at this time. Try again later"
+
+        embed_message = Embed(
+            title=title,
+            colour=0xBAD330,
+        )
 
         await ctx.respond(embed=embed_message)
 
@@ -78,6 +87,7 @@ class MonthlyDraw(Cog):
         logger.info("%s executed [submit_token] command", ctx.user)
         reactions = []
         today = datetime.date.today()
+        date_range = [str(today.replace(day=1)), str(today)]
         embed_message = Embed(
             colour=0x0F3FE5, title="Vote for the token of the month! 🗳️"
         )
@@ -86,7 +96,7 @@ class MonthlyDraw(Cog):
 
         try:
             submissions = await MonthlySubmission().get_randomized_submissions(
-                date_range=[str(today.replace(day=1)), str(today)]
+                date_range=date_range
             )
 
             for index, submission in enumerate(submissions):
