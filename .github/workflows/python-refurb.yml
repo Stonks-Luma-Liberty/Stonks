@@ -21,4 +21,4 @@ jobs:
         pip install refurb
     - name: Analysing the code with refurb
       run: |
-        refurb .
+        refurb $(git ls-files '*.py')
