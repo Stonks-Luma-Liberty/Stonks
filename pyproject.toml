@@ -19,7 +19,7 @@ python-dateutil = "^2.8.2"
 plotly = "^5.5.0"
 inflection = "^0.5.1"
 kaleido = "0.2.1"
-tortoise-orm = {extras = ["asyncpg"], version = "^0.18.1"}
+tortoise-orm = {extras = ["asyncpg"], version = "^0.20.0"}
 py-cord = "^2.0.0"
 coinmarketcap-utils = {path = "coinmarketcap_utils/target/wheels/coinmarketcap_utils-0.1.0.tar.gz"}
 
