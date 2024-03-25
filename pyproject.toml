@@ -26,7 +26,7 @@ coinmarketcap-utils = {path = "coinmarketcap_utils/target/wheels/coinmarketcap_u
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
 pre-commit = "^2.18.1"
-wemake-python-styleguide = "^0.16.1"
+wemake-python-styleguide = "^0.19.0"
 types-requests = "^2.27.16"
 maturin = "^0.12.12"
 
